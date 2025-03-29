@@ -116,7 +116,7 @@ luad_embeddings = []
 lusc_embeddings = []
 coad_embeddings = []
 
-#Replace line below with hugging face token
+# Replace line below with hugging face token
 login(token = 'YOUR_HF_TOKEN')
 model = create_model("hf_hub:prov-gigapath/prov-gigapath", pretrained=True)
 model.eval()
