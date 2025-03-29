@@ -115,7 +115,7 @@ luad_embeddings = []
 lusc_embeddings = []
 coad_embeddings = []
 
-#Replace line below with hugging face token
+# Replace line below with hugging face token
 login(token = 'YOUR_HF_TOKEN')
 model= timm.create_model("resnet34", pretrained=True)
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
@@ -139,7 +139,6 @@ def load_patches_brca(category_label):
         patches = np.load(os.path.join(preprocessed_patches_dir_brca, filename))
         patches_list.append(patches)
     return np.concatenate(patches_list, axis=0) if patches_list else np.array([])
-
 
 def load_patches_luad(category_label):
     patches_list = []
