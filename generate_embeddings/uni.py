@@ -37,6 +37,7 @@ slides_df = slides_df.sort_values(by='Project ID').reset_index(drop=True)
 base_dir = '/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_FILES/'
 slides_df['Full Path'] = slides_df.apply(lambda row: os.path.join(base_dir, row['File ID'], row['File Name']), axis=1)
 
+# Crop function
 def crop(im, patch_size):
     height, width, _ = im.shape
     n_patches_h = height // patch_size
@@ -115,7 +116,8 @@ luad_embeddings = []
 lusc_embeddings = []
 coad_embeddings = []
 
-login(token = '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')
+# Replace line below with hugging face token
+login(token = 'YOUR_HF_TOKEN')
 model = timm.create_model("hf-hub:MahmoodLab/UNI", pretrained=True, init_values=1e-5, dynamic_img_size=True)
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 model.eval()
@@ -139,7 +141,6 @@ def load_patches_brca(category_label):
         patches_list.append(patches)
     return np.concatenate(patches_list, axis=0) if patches_list else np.array([])
 
-
 def load_patches_luad(category_label):
     patches_list = []
     filenames = [f for f in os.listdir(preprocessed_patches_dir_luad) if category_label in f]
@@ -147,7 +148,6 @@ def load_patches_luad(category_label):
         patches = np.load(os.path.join(preprocessed_patches_dir_luad, filename))
         patches_list.append(patches)
     return np.concatenate(patches_list, axis=0) if patches_list else np.array([])
-
 
 def load_patches_lusc(category_label):
     patches_list = []
