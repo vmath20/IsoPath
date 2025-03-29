@@ -117,7 +117,7 @@ lusc_embeddings = []
 coad_embeddings = []
 
 # Replace line below with hugging face token
-login(token = 'YOUR_HF_TOKEN')
+login(token = "YOUR_HF_TOKEN")
 model = create_model("hf_hub:prov-gigapath/prov-gigapath", pretrained=True)
 model.eval()
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
