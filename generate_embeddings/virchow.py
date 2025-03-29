@@ -97,10 +97,13 @@ def embed(
 
         # Call model
         with torch.no_grad():
-            batch_emb = model(batch)
+            output = model(batch)
+            cls_token = output[:, 0]
+            patch_tokens = output[:, 5:]
+            pooled = torch.cat([cls_token, patch_tokens.mean(1)], dim=-1)
 
         # Copy to host and append
-        opt_embs.append(batch_emb.cpu())
+        opt_embs.append(pooled.cpu())
 
     # Stack to contiguous array
     opt_embs = torch.cat(opt_embs, dim=0)
