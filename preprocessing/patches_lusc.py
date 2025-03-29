@@ -67,44 +67,6 @@ def patchify(im, mask, patch_size, n_patches_h, n_patches_w):
             patches.append(patch)
     return np.stack(patches)
 
-def embed(
-    patches,
-    model,
-    transform,
-    device,
-    batch_size=64,
-    verbose=True,
-):
-    num_batches = ceil(len(patches) / batch_size)
-    opt_embs = []
-
-    for batch_idx in tqdm(range(num_batches), disable=not verbose):
-        # Slice batch
-        start = batch_idx * batch_size
-        end = min(start + batch_size, len(patches))
-        batch_np = patches[start:end]
-
-        # Convert numpy arrays to PIL Images for transform
-        batch_pil = [Image.fromarray(patch.astype('uint8')) for patch in batch_np]
-        
-        # Apply transform to each image
-        batch_transformed = [transform(img) for img in batch_pil]
-        
-        # Stack transformed images
-        batch = torch.stack(batch_transformed).to(device)
-
-        # Call model
-        with torch.no_grad():
-            batch_emb = model(batch)
-
-        # Copy to host and append
-        opt_embs.append(batch_emb.cpu())
-
-    # Stack to contiguous array
-    opt_embs = torch.cat(opt_embs, dim=0)
-
-    return opt_embs
-
 num_slides = 250
 num_patches_per_slide = 250
 patch_size = 224
