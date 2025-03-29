@@ -37,6 +37,7 @@ slides_df = slides_df.sort_values(by='Project ID').reset_index(drop=True)
 base_dir = '/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_FILES/'
 slides_df['Full Path'] = slides_df.apply(lambda row: os.path.join(base_dir, row['File ID'], row['File Name']), axis=1)
 
+# Crop function
 def crop(im, patch_size):
     height, width, _ = im.shape
     n_patches_h = height // patch_size
@@ -99,8 +100,6 @@ def embed(patches, model, processor, device, batch_size=64, verbose=True):
 
     return opt_embs.numpy()
 
-
-
 num_slides = 250
 num_patches_per_slide = 250
 patch_size = 224
@@ -110,19 +109,12 @@ luad_embeddings = []
 lusc_embeddings = []
 coad_embeddings = []
 
-
-
-
-
-login(token = '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')
+#Replace line below with hugging face token
+login(token = 'YOUR_HF_TOKEN')
 model = CLIPModel.from_pretrained("wisdomik/QuiltNet-B-32")
 preprocess = CLIPProcessor.from_pretrained("wisdomik/QuiltNet-B-32")
 model.eval()
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-
-
-
-
 
 # Load preprocessed patches
 preprocessed_patches_dir_brca = "preprocessed_patches_BRCA"
@@ -190,17 +182,6 @@ brca_labels = [f"BRCA_{i+1}" for i in range(num_brca)]
 luad_labels = [f"LUAD_{i+1}" for i in range(num_luad)]
 lusc_labels = [f"LUSC_{i+1}" for i in range(num_lusc)]
 coad_labels = [f"COAD_{i+1}" for i in range(num_coad)]
-
-
-
-
-
-
-
-
-
-
-
 
 # Save embeddings for all subtypes
 np.save("brca_embeddings_quiltnet.npy", brca_embeddings)
