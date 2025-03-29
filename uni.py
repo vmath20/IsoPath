@@ -28,13 +28,7 @@ import glob
 from torchvision import transforms
 from timm import create_model
 from huggingface_hub import login
-
-slide = openslide.OpenSlide("/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_FILES/7ea8749b-c86b-49ff-946c-625943f1d8e7/TCGA-GM-A3XG-01Z-00-DX1.68FFB600-8573-451F-8100-D11DB091F457.svs")
-
-thumbnail = slide.get_thumbnail((1024, 1024))
-plt.imshow(thumbnail)
-plt.axis('off')
-plt.show()
+from timm.layers import SwiGLUPacked
 
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
 metadata_df = pd.read_csv(metadata_path, sep='\t')
@@ -198,69 +192,8 @@ luad_labels = [f"LUAD_{i+1}" for i in range(num_luad)]
 lusc_labels = [f"LUSC_{i+1}" for i in range(num_lusc)]
 coad_labels = [f"COAD_{i+1}" for i in range(num_coad)]
 
-# Combine embeddings and labels for all four subtypes: BRCA, LUAD, LUSC, COAD
-embeddings = np.concatenate([brca_embeddings, luad_embeddings, lusc_embeddings, coad_embeddings], axis=0)
-labels = brca_labels + luad_labels + lusc_labels + coad_labels
-
-from rsatoolbox.data import Dataset
-from rsatoolbox.rdm import calc_rdm
-# Create rsatoolbox Dataset with slide-specific labels
-dataset = Dataset(measurements=embeddings, obs_descriptors={'patches': labels})
-
 # Save embeddings for all subtypes
-np.save("brca_embeddings_uni.npy", brca_embeddings)
-np.save("luad_embeddings_uni.npy", luad_embeddings)
-np.save("lusc_embeddings_uni.npy", lusc_embeddings)
-np.save("coad_embeddings_uni.npy", coad_embeddings)
-
-# Calculate the RDM
-rdm_uni = calc_rdm(dataset, method='euclidean')
-rdm_matrix_uni = rdm_uni.get_matrices()[0]
-np.save("rdm_matrix_uni.npy", rdm_matrix_uni)
-print("RDM matrix saved as rdm_matrix_uni.npy")
-
-# Plot the RDM with slide-specific separation
-plt.figure(figsize=(15, 12))
-sns.heatmap(rdm_matrix_uni, xticklabels=labels, yticklabels=labels, cmap='Blues', annot=False, cbar=True)
-
-# Calculate the cumulative number of patches for each subtype
-cumulative_brca = np.cumsum([brca_labels.count(f"BRCA_{i+1}") for i in range(num_slides)]) 
-cumulative_luad = np.cumsum([luad_labels.count(f"LUAD_{i+1}") for i in range(num_slides)]) + num_brca
-cumulative_lusc = np.cumsum([lusc_labels.count(f"LUSC_{i+1}") for i in range(num_slides)]) + num_brca + num_luad
-cumulative_coad = np.cumsum([coad_labels.count(f"COAD_{i+1}") for i in range(num_slides)]) + num_brca + num_luad + num_lusc
-
-# Add red lines to separate each subtype in the heatmap
-plt.axhline(num_brca, color='red', linewidth=2)  # Separator between BRCA and LUAD
-plt.axvline(num_brca, color='red', linewidth=2)
-
-plt.axhline(num_brca + num_luad, color='red', linewidth=2)  # Separator between LUAD and LUSC
-plt.axvline(num_brca + num_luad, color='red', linewidth=2)
-
-plt.axhline(num_brca + num_luad + num_lusc, color='red', linewidth=2)  # Separator between LUSC and COAD
-plt.axvline(num_brca + num_luad + num_lusc, color='red', linewidth=2)
-
-# Draw dashed separator lines for each slide within the subtypes
-for pos in cumulative_brca[:-1]:  # Horizontal and vertical lines within BRCA
-    plt.axhline(pos, color='blue', linestyle='--', linewidth=1)
-    plt.axvline(pos, color='blue', linestyle='--', linewidth=1)
-
-for pos in cumulative_luad[:-1]:  # Horizontal and vertical lines within LUAD
-    plt.axhline(pos, color='green', linestyle='--', linewidth=1)
-    plt.axvline(pos, color='green', linestyle='--', linewidth=1)
-
-for pos in cumulative_lusc[:-1]:  # Horizontal and vertical lines within LUSC
-    plt.axhline(pos, color='orange', linestyle='--', linewidth=1)
-    plt.axvline(pos, color='orange', linestyle='--', linewidth=1)
-
-for pos in cumulative_coad[:-1]:  # Horizontal and vertical lines within COAD
-    plt.axhline(pos, color='purple', linestyle='--', linewidth=1)
-    plt.axvline(pos, color='purple', linestyle='--', linewidth=1)
-
-plt.title('Representational Dissimilarity Matrix (RDM) - UNI with Slide-Specific Labels')
-plt.xlabel('Patches')
-plt.ylabel('Patches')
-
-# Save the RDM plot as an image
-output_path = "rdm_matrix_uni.png"
-plt.savefig(output_path, dpi=300, bbox_inches='tight')
-plt.show()
+np.save("/lotterlab/users/vmishra/brca_embeddings_uni.npy", brca_embeddings)
+np.save("/lotterlab/users/vmishra/luad_embeddings_uni.npy", luad_embeddings)
+np.save("/lotterlab/users/vmishra/lusc_embeddings_uni.npy", lusc_embeddings)
+np.save("/lotterlab/users/vmishra/coad_embeddings_uni.npy", coad_embeddings)
