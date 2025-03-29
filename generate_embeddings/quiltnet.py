@@ -110,7 +110,7 @@ lusc_embeddings = []
 coad_embeddings = []
 
 # Replace line below with hugging face token
-login(token = 'YOUR_HF_TOKEN')
+login(token = "YOUR_HF_TOKEN")
 model = CLIPModel.from_pretrained("wisdomik/QuiltNet-B-32")
 preprocess = CLIPProcessor.from_pretrained("wisdomik/QuiltNet-B-32")
 model.eval()
