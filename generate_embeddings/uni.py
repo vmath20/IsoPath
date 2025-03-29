@@ -117,7 +117,7 @@ lusc_embeddings = []
 coad_embeddings = []
 
 # Replace line below with hugging face token
-login(token = 'YOUR_HF_TOKEN')
+login(token = "YOUR_HF_TOKEN")
 model = timm.create_model("hf-hub:MahmoodLab/UNI", pretrained=True, init_values=1e-5, dynamic_img_size=True)
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 model.eval()
