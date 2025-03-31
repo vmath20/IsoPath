@@ -117,7 +117,7 @@ coad_embeddings = []
 
 # Replace line below with hugging face token
 login(token = "YOUR_HF_TOKEN")
-model= timm.create_model("resnet34", pretrained=True)
+model = timm.create_model("resnet50", pretrained=True)
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 model.eval()
 preprocess = transforms.Compose([
