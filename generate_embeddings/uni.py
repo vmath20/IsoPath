@@ -29,6 +29,8 @@ from torchvision import transforms
 from timm import create_model
 from huggingface_hub import login
 from timm.layers import SwiGLUPacked
+from timm import create_model
+
 
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
 metadata_df = pd.read_csv(metadata_path, sep='\t')
@@ -118,17 +120,28 @@ coad_embeddings = []
 
 # Replace line below with hugging face token
 login(token = "YOUR_HF_TOKEN")
-model = timm.create_model("hf-hub:MahmoodLab/UNI", pretrained=True, init_values=1e-5, dynamic_img_size=True)
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+timm_kwargs = {
+            'img_size': 224, 
+            'patch_size': 14, 
+            'depth': 24,
+            'num_heads': 24,
+            'init_values': 1e-5, 
+            'embed_dim': 1536,
+            'mlp_ratio': 2.66667*2,
+            'num_classes': 0, 
+            'no_embed_class': True,
+            'mlp_layer': timm.layers.SwiGLUPacked, 
+            'act_layer': torch.nn.SiLU, 
+            'reg_tokens': 8, 
+            'dynamic_img_size': True
+        }
+model = timm.create_model("hf-hub:MahmoodLab/UNI2-h", pretrained=True, **timm_kwargs)
+preprocess = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
 model.eval()
-preprocess = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 # Load preprocessed patches
-preprocessed_patches_dir_brca = "preprocessed_patches_BRCA"
+preprocessed_patches_dir_brca = "/lotterlab/users/vmishra/preprocessed_patches_BRCA"
 preprocessed_patches_dir_luad = "/lotterlab/users/vmishra/preprocessed_patches_LUAD"
 preprocessed_patches_dir_lusc = "/lotterlab/users/vmishra/preprocessed_patches_LUSC"
 preprocessed_patches_dir_coad = "/lotterlab/users/vmishra/preprocessed_patches_COAD"
