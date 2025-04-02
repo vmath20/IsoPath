@@ -135,10 +135,11 @@ timm_kwargs = {
             'reg_tokens': 8, 
             'dynamic_img_size': True
         }
-model = timm.create_model("hf-hub:MahmoodLab/UNI2-h", pretrained=True, **timm_kwargs)
-preprocess = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
-model.eval()
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+model = timm.create_model("hf-hub:MahmoodLab/UNI2-h", pretrained=True, **timm_kwargs)
+model.to(device)
+model.eval()
+preprocess = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
 
 # Load preprocessed patches
 preprocessed_patches_dir_brca = "/lotterlab/users/vmishra/preprocessed_patches_BRCA"
