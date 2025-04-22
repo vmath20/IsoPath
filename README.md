@@ -137,7 +137,7 @@ Repeat this process for each model script (`plip.py`, `prov.py`, `quiltnet.py`, 
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Author
+## Authors
 
 *   Vaibhav Mishra
 *   William Lotter
