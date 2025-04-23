@@ -69,30 +69,6 @@ The following pre-trained models are included in the comparison:
     *   **Specificity Analysis:** Calculates Cliff's Delta to compare intra-vs-inter-slide distances ("Slide Specificity") and intra-vs-inter-disease distances ("Disease Specificity"). Saves results to CSV.
     *   **Spectral Analysis:** Performs SVD on the full embeddings for each model and plots the cumulative explained variance to compare effective dimensionality.
 
-## Requirements
-
-*   Python (likely >= 3.8)
-*   PyTorch
-*   NumPy
-*   Pandas
-*   OpenSlide-Python
-*   Scikit-image
-*   Scikit-learn
-*   Timm (`timm`)
-*   Transformers (`transformers`)
-*   Hugging Face Hub (`huggingface_hub`)
-*   Matplotlib
-*   Seaborn
-*   RSA Toolbox (`rsatoolbox`)
-*   SciPy
-*   Einops
-*   CONCH (`pip install git+https://github.com/Mahmoodlab/CONCH.git`)
-*   Cliffs-Delta (`cliffs_delta`)
-*   Access to a GPU is highly recommended for embedding generation.
-*   Hugging Face Hub token (required for accessing some models like UNI, Virchow, Prov-GigaPath, PLIP, CONCH). Set via `huggingface_hub.login()`.
-
-*(A `requirements.txt` file would be beneficial for exact version control)*.
-
 ## Usage
 
 **Note:** The paths in the scripts (`/tcga/`, `/lotterlab/users/vmishra/`) are hardcoded and specific to a particular compute environment. You will need to adapt these paths to your own data storage and output directories.
@@ -102,6 +78,13 @@ The following pre-trained models are included in the comparison:
     *   Install the required Python packages.
     *   Ensure you have access to the required TCGA WSI data.
     *   Configure your Hugging Face Hub token if needed.
+    *   Special Installation for CONCH:
+    *   CONCH needs to be installed directly from its repository:
+    ```bash
+    pip install git+https://github.com/Mahmoodlab/CONCH.git
+    ```
+    *Note: You might need to run `rm generate_embeddings/conch.py` if you encounter import issues related to a potentially existing `conch.py` file after installation.*
+
 2.  **Preprocessing:**
     *   Modify paths in `preprocessing.py` for metadata, input WSI data, and the output directory for preprocessed patches.
     *   Run the script: `python preprocessing.py`
