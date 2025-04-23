@@ -78,13 +78,6 @@ The following pre-trained models are included in the comparison:
     *   Install the required Python packages.
     *   Ensure you have access to the required TCGA WSI data.
     *   Configure your Hugging Face Hub token if needed.
-    *   Special Installation for CONCH:
-    *   CONCH needs to be installed directly from its repository:
-    ```bash
-    pip install git+https://github.com/Mahmoodlab/CONCH.git
-    ```
-    *Note: You might need to run `rm generate_embeddings/conch.py` if you encounter import issues related to a potentially existing `conch.py` file after installation.*
-
 2.  **Preprocessing:**
     *   Modify paths in `preprocessing.py` for metadata, input WSI data, and the output directory for preprocessed patches.
     *   Run the script: `python preprocessing.py`
