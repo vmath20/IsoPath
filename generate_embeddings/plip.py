@@ -1,34 +1,15 @@
-import openslide
 from PIL import Image
 import os
 import numpy as np
 import torch
-import torch.nn as nn
-import tifffile
 import pandas as pd
-from skimage.transform import downscale_local_mean
 from skimage import filters, color
 from math import ceil
 from tqdm import tqdm
-from torchvision.transforms import Normalize, Compose
-from einops import rearrange
 import matplotlib.pyplot as plt
-import random
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
 from torchvision import transforms
-from torch.utils.data import DataLoader, Dataset
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.cluster import KMeans
 import timm
-import glob
-from torchvision import transforms
-from timm import create_model
 from huggingface_hub import login
-from timm.layers import SwiGLUPacked
 
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
 metadata_df = pd.read_csv(metadata_path, sep='\t')
@@ -36,38 +17,6 @@ slides_df = metadata_df[metadata_df['Data Type'] == 'Slide Image']
 slides_df = slides_df.sort_values(by='Project ID').reset_index(drop=True)
 base_dir = '/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_FILES/'
 slides_df['Full Path'] = slides_df.apply(lambda row: os.path.join(base_dir, row['File ID'], row['File Name']), axis=1)
-
-# Crop function
-def crop(im, patch_size):
-    height, width, _ = im.shape
-    n_patches_h = height // patch_size
-    n_patches_w = width // patch_size
-    height_crop = patch_size * n_patches_h
-    width_crop = patch_size * n_patches_w
-    im = im[:height_crop, :width_crop, :]
-    return im, n_patches_h, n_patches_w
-
-# Segment function
-def segment(thumb):
-    im_gray = color.rgb2gray(thumb)
-    thres = filters.threshold_otsu(im_gray)
-    mask = im_gray < thres
-    return mask
-
-# Patchify function
-def patchify(im, mask, patch_size, n_patches_h, n_patches_w):
-    patches = []
-    for i in range(n_patches_h):
-        for j in range(n_patches_w):
-            if not mask[i, j]:
-                continue
-            start_i = i * patch_size
-            end_i = start_i + patch_size
-            start_j = j * patch_size
-            end_j = start_j + patch_size
-            patch = im[start_i:end_i, start_j:end_j, :]
-            patches.append(patch)
-    return np.stack(patches)
 
 def embed(patches, model, processor, device, batch_size=64, verbose=True):
     num_batches = ceil(len(patches) / batch_size)
