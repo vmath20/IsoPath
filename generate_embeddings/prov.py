@@ -4,9 +4,7 @@ import numpy as np
 import torch
 import pandas as pd
 from math import ceil
-import timm
 from tqdm import tqdm
-from torchvision import transforms
 from huggingface_hub import login
 
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
