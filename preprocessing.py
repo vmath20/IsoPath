@@ -2,32 +2,15 @@ import openslide
 from PIL import Image
 import os
 import numpy as np
-import torch
-import torch.nn as nn
-import tifffile
 import pandas as pd
 from skimage.transform import downscale_local_mean
 from skimage import filters, color
-from math import ceil
-from tqdm import tqdm
-from torchvision.transforms import Normalize, Compose
-from einops import rearrange
-import matplotlib.pyplot as plt
-import random
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
-from torchvision import transforms
-from torch.utils.data import DataLoader, Dataset
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.cluster import KMeans
-import timm
-import glob
-from torchvision import transforms
-from timm import create_model
-from huggingface_hub import login
+
+
+#Constants
+num_slides = 250
+num_patches_per_slide = 250
+patch_size = 224
 
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
 metadata_df = pd.read_csv(metadata_path, sep='\t')
@@ -66,10 +49,6 @@ def patchify(im, mask, patch_size, n_patches_h, n_patches_w):
             patch = im[start_i:end_i, start_j:end_j, :]
             patches.append(patch)
     return np.stack(patches)
-
-num_slides = 250
-num_patches_per_slide = 250
-patch_size = 224
 
 tcga_coad_slides = slides_df[slides_df['Project ID'] == 'TCGA-COAD']
 coad_embeddings = []
