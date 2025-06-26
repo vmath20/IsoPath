@@ -11,6 +11,7 @@ from timm.layers import SwiGLUPacked
 from timm.data import resolve_data_config
 from timm.data.transforms_factory import create_transform
 
+#Constants
 num_slides = 250
 num_patches_per_slide = 250
 patch_size = 224
