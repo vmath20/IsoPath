@@ -29,7 +29,7 @@ The following pre-trained models are included in the comparison:
 ```
 └── vmath20-isopath/
     ├── README.md               # This file
-    ├── FinalRDMGenerationAnalysis.ipynb # Jupyter Notebook for all RSA, clustering, specificity, and spectral analyses
+    ├── FinalRDMGenerationAnalysisV2.ipynb # Jupyter Notebook for all RSA, clustering, specificity, and spectral analyses
     ├── LICENSE                 # MIT License file
     ├── preprocessing.py        # Script for WSI loading, patch extraction, and saving
     └── generate_embeddings/    # Directory containing scripts/notebooks for generating embeddings
@@ -60,7 +60,7 @@ The following pre-trained models are included in the comparison:
     *   Applies the model-specific image transformations.
     *   Processes patches in batches through the model on a GPU to generate embeddings.
     *   Saves the embeddings as `.npy` files (one file per cancer type per model, e.g., `brca_embeddings_conch.npy`) to a designated directory (e.g., `/lotterlab/users/vmishra/`).
-4.  **Analysis (`FinalRDMGenerationAnalysis.ipynb`):**
+4.  **Analysis (`FinalRDMGenerationAnalysisV2.ipynb`):**
     *   **Batching:** Loads the full embeddings and splits them into 5 batches (50 slides x 50 patches each) for robustness analysis, saving batched embeddings (e.g., `/lotterlab/users/vmishra/batched_embeddings`).
     *   **RDM Calculation:** Calculates RDMs (Euclidean distance) for each model within each batch using `rsatoolbox` and saves them (e.g., `/lotterlab/users/vmishra/rdms`). Also calculates overall RDMs for visualization.
     *   **RDM Visualization:** Generates and saves heatmap visualizations of the RDMs for each model.
@@ -89,7 +89,7 @@ The following pre-trained models are included in the comparison:
         *   Provide your Hugging Face token where `login()` is called.
         *   Run the script (e.g., `python generate_embeddings/resnet.py`) or execute the notebook cells.
 4.  **Analysis:**
-    *   Modify paths in `FinalRDMGenerationAnalysis.ipynb` to point to the saved embeddings (full and batched), RDM storage, and desired output locations for figures and CSV files.
+    *   Modify paths in `FinalRDMGenerationAnalysisV2.ipynb` to point to the saved embeddings (full and batched), RDM storage, and desired output locations for figures and CSV files.
     *   Execute the cells in the notebook sequentially.
 
 ## Results
