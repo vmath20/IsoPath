@@ -9,7 +9,7 @@ from huggingface_hub import login
 from torchvision import transforms
 import timm
 
-
+#Constants
 num_slides = 250
 num_patches_per_slide = 250
 patch_size = 224
