@@ -7,12 +7,24 @@ from math import ceil
 from tqdm import tqdm
 from huggingface_hub import login
 
+#Constants
+num_slides = 250
+num_patches_per_slide = 250
+patch_size = 224
+
 metadata_path = "/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_SAMPLE_METADATA/2023-09-01/gdc_sample_sheet.2023-09-05.tsv"
 metadata_df = pd.read_csv(metadata_path, sep='\t')
 slides_df = metadata_df[metadata_df['Data Type'] == 'Slide Image']
 slides_df = slides_df.sort_values(by='Project ID').reset_index(drop=True)
 base_dir = '/tcga/open-access/gdc_data_portal/biospecimen/tcga_Biospecimen_FILES/'
 slides_df['Full Path'] = slides_df.apply(lambda row: os.path.join(base_dir, row['File ID'], row['File Name']), axis=1)
+
+# Load preprocessed patches
+preprocessed_patches_dir_brca = "preprocessed_patches_BRCA"
+preprocessed_patches_dir_luad = "/lotterlab/users/vmishra/preprocessed_patches_LUAD"
+preprocessed_patches_dir_lusc = "/lotterlab/users/vmishra/preprocessed_patches_LUSC"
+preprocessed_patches_dir_coad = "/lotterlab/users/vmishra/preprocessed_patches_COAD"
+login(token = "YOUR_HF_TOKEN") # Replace with hugging face token
 
 def embed(patches, model, processor, device, batch_size=64, verbose=True):
     num_batches = ceil(len(patches) / batch_size)
@@ -45,27 +57,15 @@ def embed(patches, model, processor, device, batch_size=64, verbose=True):
 
     return opt_embs.numpy()
 
-num_slides = 250
-num_patches_per_slide = 250
-patch_size = 224
-
 brca_embeddings = []
 luad_embeddings = []
 lusc_embeddings = []
 coad_embeddings = []
 
-# Replace line below with hugging face token
-login(token = "YOUR_HF_TOKEN")
 model = CLIPModel.from_pretrained("wisdomik/QuiltNet-B-32")
 preprocess = CLIPProcessor.from_pretrained("wisdomik/QuiltNet-B-32")
 model.eval()
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-
-# Load preprocessed patches
-preprocessed_patches_dir_brca = "preprocessed_patches_BRCA"
-preprocessed_patches_dir_luad = "/lotterlab/users/vmishra/preprocessed_patches_LUAD"
-preprocessed_patches_dir_lusc = "/lotterlab/users/vmishra/preprocessed_patches_LUSC"
-preprocessed_patches_dir_coad = "/lotterlab/users/vmishra/preprocessed_patches_COAD"
 
 def load_patches_brca(category_label):
     patches_list = []
